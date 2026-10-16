@@ -1,0 +1,616 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SavorIsle Recipe Import Package v1",
+  "type": "object",
+  "properties": {
+    "format_version": {
+      "type": "string",
+      "enum": [
+        "savorisle.recipe-import.v1"
+      ]
+    },
+    "source": {
+      "$ref": "#/$defs/ImportSourceInput"
+    },
+    "recipes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ImportInput"
+      },
+      "maxItems": 1000,
+      "minItems": 1
+    }
+  },
+  "required": [
+    "format_version",
+    "source",
+    "recipes"
+  ],
+  "$defs": {
+    "ImportSourceInput": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "ImportInput": {
+      "type": "object",
+      "properties": {
+        "recipe": {
+          "$ref": "#/$defs/ImportRecipeInput"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImportEvidence"
+          }
+        }
+      },
+      "required": [
+        "recipe"
+      ]
+    },
+    "ImportRecipeInput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "servings": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "published",
+            "archived",
+            "trash"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImportGroupInput"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImportStepInput"
+          }
+        },
+        "favorite": {
+          "type": "boolean"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RecipeResource"
+          }
+        },
+        "can_edit": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "",
+            "cooking",
+            "baking",
+            "drink"
+          ]
+        },
+        "meal_role": {
+          "type": "string",
+          "enum": [
+            "",
+            "dish",
+            "soup",
+            "staple",
+            "dessert",
+            "snack",
+            "drink"
+          ]
+        },
+        "total_minutes": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10080
+        },
+        "active_minutes": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10080
+        },
+        "source": {
+          "$ref": "#/$defs/RecipeSource"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ImportGroupInput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImportIngredientInput"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "ImportIngredientInput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "upper": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "scaling": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "fixed",
+            "manual"
+          ]
+        },
+        "ingredient_id": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/$defs/CatalogReference"
+        },
+        "equivalents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EquivalentMeasure"
+          },
+          "maxItems": 12
+        },
+        "conversion_material": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "scaling"
+      ]
+    },
+    "CatalogReference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "brand": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "specification": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "number"
+        },
+        "spec_structured": {
+          "type": "string"
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ComponentSnapshot"
+          }
+        },
+        "pack_id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "pack_version": {
+          "type": "string",
+          "readOnly": true
+        },
+        "nutrition": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/NutritionProfile"
+            }
+          ],
+          "nullable": true
+        },
+        "conversion_material": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "name",
+        "brand",
+        "model",
+        "specification",
+        "kind"
+      ]
+    },
+    "ComponentSnapshot": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "ingredient",
+            "food"
+          ]
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "quantity",
+        "unit"
+      ]
+    },
+    "NutritionProfile": {
+      "type": "object",
+      "properties": {
+        "basis_quantity": {
+          "type": "string"
+        },
+        "basis_unit": {
+          "type": "string",
+          "enum": [
+            "克",
+            "毫升"
+          ]
+        },
+        "energy": {
+          "type": "string"
+        },
+        "energy_unit": {
+          "type": "string",
+          "enum": [
+            "kcal",
+            "kJ"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "as_listed",
+            "raw",
+            "cooked",
+            "drained"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "protein": {
+          "type": "string",
+          "description": "每基准用量的数值；未知留空。钠单位毫克，其余单位克。"
+        },
+        "fat": {
+          "type": "string",
+          "description": "每基准用量的数值；未知留空。钠单位毫克，其余单位克。"
+        },
+        "carbohydrate": {
+          "type": "string",
+          "description": "每基准用量的数值；未知留空。钠单位毫克，其余单位克。"
+        },
+        "fiber": {
+          "type": "string",
+          "description": "每基准用量的数值；未知留空。钠单位毫克，其余单位克。"
+        },
+        "sugar": {
+          "type": "string",
+          "description": "每基准用量的数值；未知留空。钠单位毫克，其余单位克。"
+        },
+        "saturated_fat": {
+          "type": "string",
+          "description": "每基准用量的数值；未知留空。钠单位毫克，其余单位克。"
+        },
+        "sodium": {
+          "type": "string",
+          "description": "每基准用量的数值；未知留空。钠单位毫克，其余单位克。"
+        }
+      },
+      "required": [
+        "basis_quantity",
+        "basis_unit",
+        "state",
+        "source"
+      ]
+    },
+    "EquivalentMeasure": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "quantity",
+        "unit"
+      ]
+    },
+    "ImportStepInput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "ingredient_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Timer"
+          }
+        },
+        "resource_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ingredient_uses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IngredientUse"
+          }
+        },
+        "prepared_group_uses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PreparedGroupUse"
+          }
+        },
+        "completes_groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output_name": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "required": [
+        "text"
+      ]
+    },
+    "Timer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "seconds": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 604800
+        },
+        "waiting": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "seconds",
+        "waiting"
+      ]
+    },
+    "IngredientUse": {
+      "type": "object",
+      "properties": {
+        "ingredient_id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "add",
+            "process",
+            "reference"
+          ]
+        },
+        "amount": {
+          "type": "string",
+          "enum": [
+            "explicit",
+            "all",
+            "remaining",
+            "unspecified"
+          ]
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "upper": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ingredient_id",
+        "action",
+        "amount"
+      ]
+    },
+    "PreparedGroupUse": {
+      "type": "object",
+      "properties": {
+        "source_step_id": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "string"
+        },
+        "portion": {
+          "type": "string",
+          "enum": [
+            "all",
+            "fraction",
+            "remaining",
+            "unspecified"
+          ]
+        },
+        "fraction": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "portion"
+      ]
+    },
+    "RecipeResource": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/$defs/CatalogReference"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "product",
+        "note"
+      ]
+    },
+    "RecipeSource": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "author"
+      ]
+    },
+    "ImportEvidence": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "original",
+            "converted",
+            "inferred",
+            "missing"
+          ]
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "kind",
+        "note"
+      ]
+    }
+  }
+}

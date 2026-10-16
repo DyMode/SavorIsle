@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "savorisle": {
+      "command": "python",
+      "args": ["/absolute/path/savorisle-recipe-import/scripts/savorisle_mcp.py"],
+      "env": {
+        "SAVORISLE_URL": "https://nas.example/app/savorisle",
+        "SAVORISLE_TOOL_TOKEN": "REPLACE_WITH_PRIVATE_TOOL_TOKEN"
+      }
+    }
+  }
+}
